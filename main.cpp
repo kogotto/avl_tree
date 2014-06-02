@@ -9,29 +9,87 @@ typedef int delta_t;
 
 class TAvlTree {
 public:
-    node_t * baseFind(node_t * root, key_t key);
-    node_t * baseInsert(node_t * root, key_t key, data_t data = data_t());
-    node_t * findLeft(node_t * root);
-    node_t * findRight(node_t * root);
-    node_t * leftRotate(node_t * root);
-    node_t * rightRotate(node_t * root);
-    int ballance(node_t * root);
+    TAvlTree():
+        root(0)
+    {}
+
+    ~TAvlTree() {
+        free(root);
+    }
+
+    void insert(key_t key, data_t data = data_t()) {
+        if (root == 0) {
+            root = new node_t(0, key, data);
+            return;
+        }
+
+        node_t * parrent = root;
+        for (;;) {
+            node_t *& current = key < parrent->key ?
+                        parrent->left:
+                        parrent->right;
+            if (current == 0) {
+                current = new node_t(parrent, key, data);
+                return;
+            }
+
+            parrent = current;
+        }
+    }
+
+//    node_t * baseFind(node_t * root, key_t key);
+//    node_t * baseInsert(node_t * root, key_t key, data_t data = data_t());
+//    node_t * findLeft(node_t * root);
+//    node_t * findRight(node_t * root);
+//    node_t * leftRotate(node_t * root);
+//    node_t * rightRotate(node_t * root);
+//    int ballance(node_t * root);
 private:
 
     struct node_t {
+        node_t(node_t * parrent, key_t key, data_t data = data_t()):
+            parrent(parrent),
+            key(key),
+            data(data),
+            dh(0),
+            left(0),
+            right(0)
+        {}
+
+        node_t * parrent;
         key_t key;
         data_t data;
         delta_t dh;
         node_t * left;
         node_t * right;
-        node_t * parrent;
     };
+
+    static void free(node_t * root) {
+        if (root == 0) {
+            return;
+        }
+
+        free(root->left);
+        free(root->right);
+
+        delete root;
+    }
+
+    node_t * root;
 };
 
 
 int main()
 {
-    cout << "Hello World!" << endl;
+    TAvlTree avlTree;
+    size_t size = 0;
+    cin >> size;
+    for (size_t i = 0; i < size; ++i) {
+        key_t key = 0;
+        cin >> key;
+        avlTree.insert(key);
+    }
+
     return 0;
 }
 
