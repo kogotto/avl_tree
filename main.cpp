@@ -8,6 +8,7 @@ typedef int delta_t;
 
 
 class TAvlTree {
+    friend int main();
 public:
     TAvlTree():
         root(0)
@@ -64,6 +65,18 @@ private:
         node_t * right;
     };
 
+    static void leftRotate(node_t *& root) {
+        node_t * right = root->right;
+        node_t * rightLeft = right->left;
+
+        root->right = rightLeft;
+        rightLeft->parrent = root;
+        right->left = root;
+        right->parrent = root->parrent;
+        root->parrent = right;
+        root = right;
+    }
+
     static void free(node_t * root) {
         if (root == 0) {
             return;
@@ -90,6 +103,7 @@ int main()
         avlTree.insert(key);
     }
 
+    avlTree.leftRotate(avlTree.root);
     return 0;
 }
 
