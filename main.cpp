@@ -77,6 +77,18 @@ private:
         root = right;
     }
 
+    static void rightRotate(node_t *& root) {
+       node_t * left = root->left;
+       node_t * leftRight = left->right;
+
+       root->right = leftRight;
+       leftRight->parrent = root;
+       left->right = root;
+       left->parrent = root->parrent;
+       root->parrent = left;
+       root = left;
+    }
+
     static void free(node_t * root) {
         if (root == 0) {
             return;
@@ -103,7 +115,7 @@ int main()
         avlTree.insert(key);
     }
 
-    avlTree.leftRotate(avlTree.root);
+    avlTree.rightRotate(avlTree.root);
     return 0;
 }
 
