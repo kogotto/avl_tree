@@ -38,6 +38,14 @@ public:
         }
     }
 
+    key_t min() const {
+        return findLeft(root)->key;
+    }
+
+    key_t max() const {
+        return findRight(root)->key;
+    }
+
 //    node_t * baseFind(node_t * root, key_t key);
 //    node_t * baseInsert(node_t * root, key_t key, data_t data = data_t());
 //    node_t * findLeft(node_t * root);
@@ -81,12 +89,30 @@ private:
        node_t * left = root->left;
        node_t * leftRight = left->right;
 
-       root->right = leftRight;
+       root->left = leftRight;
        leftRight->parrent = root;
        left->right = root;
        left->parrent = root->parrent;
        root->parrent = left;
        root = left;
+    }
+
+    static node_t * findLeft(node_t * root) {
+        node_t * current = root;
+        while (current->left != 0) {
+            current = current->left;
+        }
+
+        return current;
+    }
+
+    static node_t * findRight(node_t * root) {
+        node_t * current = root;
+        while (current->right != 0) {
+            current = current->right;
+        }
+
+        return current;
     }
 
     static void free(node_t * root) {
@@ -115,7 +141,8 @@ int main()
         avlTree.insert(key);
     }
 
-    avlTree.rightRotate(avlTree.root);
+    cout << "min = " << avlTree.min() << endl;
+    cout << "max = " << avlTree.max() << endl;
     return 0;
 }
 
