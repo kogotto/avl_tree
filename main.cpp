@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 
 using namespace std;
 
@@ -16,6 +17,10 @@ public:
 
     ~TAvlTree() {
         free(root);
+    }
+
+    void recursivePostOrderTraverse() {
+        recursivePostOrderTraverse(root);
     }
 
     void insert(key_t key, data_t data = data_t()) {
@@ -46,12 +51,30 @@ public:
         return findRight(root)->key;
     }
 
+
+    void postOrderTraverse() {
+        stack<node_t *> s;
+        s.push(root);
+        while (!s.empty()) {
+            while (s.top() != 0) {
+                s.push(s.top()->left);
+            }
+            s.pop();
+
+            if (s.empty()) {
+                break;
+            }
+
+            node_t * current = s.top();
+            visit(current);
+            s.pop();
+            s.push(current->right);
+        }
+    }
+
+
 //    node_t * baseFind(node_t * root, key_t key);
 //    node_t * baseInsert(node_t * root, key_t key, data_t data = data_t());
-//    node_t * findLeft(node_t * root);
-//    node_t * findRight(node_t * root);
-//    node_t * leftRotate(node_t * root);
-//    node_t * rightRotate(node_t * root);
 //    int ballance(node_t * root);
 private:
 
@@ -72,6 +95,20 @@ private:
         node_t * left;
         node_t * right;
     };
+
+    void visit(node_t * node) {
+        cout << node->key << " ";
+    }
+    static void recursivePostOrderTraverse(node_t * root) {
+        if (root == 0) {
+            return;
+        }
+
+        recursivePostOrderTraverse(root->left);
+        recursivePostOrderTraverse(root->right);
+
+        cout << root->key << " ";
+    }
 
     static void leftRotate(node_t *& root) {
         node_t * right = root->right;
@@ -140,6 +177,9 @@ int main()
         cin >> key;
         avlTree.insert(key);
     }
+
+    avlTree.postOrderTraverse();
+    cout << endl;
 
     cout << "min = " << avlTree.min() << endl;
     cout << "max = " << avlTree.max() << endl;
