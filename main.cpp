@@ -11,16 +11,25 @@ typedef int delta_t;
 class TAvlTree {
     friend int main();
 public:
+
+    template<class T>
+    struct Deleter {
+        void operator() (const T * node) const {
+            delete node;
+        }
+    };
+
     TAvlTree():
         root(0)
     {}
 
     ~TAvlTree() {
-        free(root);
+        recursivePostOrderTraverse(root, Deleter<node_t>());
     }
 
-    void recursivePostOrderTraverse() {
-        recursivePostOrderTraverse(root);
+    template<class action_t>
+    void recursivePostOrderTraverse(action_t & action) {
+        recursivePostOrderTraverse(root, action);
     }
 
     void insert(key_t key, data_t data = data_t()) {
@@ -99,15 +108,17 @@ private:
     void visit(node_t * node) {
         cout << node->key << " ";
     }
-    static void recursivePostOrderTraverse(node_t * root) {
+
+    template<class action_t>
+    static void recursivePostOrderTraverse(node_t * root, const action_t & action) {
         if (root == 0) {
             return;
         }
 
-        recursivePostOrderTraverse(root->left);
-        recursivePostOrderTraverse(root->right);
+        recursivePostOrderTraverse(root->left, action);
+        recursivePostOrderTraverse(root->right, action);
 
-        cout << root->key << " ";
+        action(root);
     }
 
     static void leftRotate(node_t *& root) {
@@ -162,17 +173,6 @@ private:
         }
 
         return current;
-    }
-
-    static void free(node_t * root) {
-        if (root == 0) {
-            return;
-        }
-
-        free(root->left);
-        free(root->right);
-
-        delete root;
     }
 
     node_t * root;
