@@ -52,7 +52,7 @@ public:
     }
 
 
-    void postOrderTraverse() {
+    void inOrderTraverse() {
         stack<node_t *> s;
         s.push(root);
         while (!s.empty()) {
@@ -134,6 +134,18 @@ private:
        root = left;
     }
 
+    static void rotate(node_t *& root) {
+        if (root->dh == 0) {
+            return;
+        }
+
+        if (root->dh > 0) {
+            rightRotate(root);
+        } else {
+            leftRotate(root);
+        }
+    }
+
     static node_t * findLeft(node_t * root) {
         node_t * current = root;
         while (current->left != 0) {
@@ -178,7 +190,7 @@ int main()
         avlTree.insert(key);
     }
 
-    avlTree.postOrderTraverse();
+    avlTree.inOrderTraverse();
     cout << endl;
 
     cout << "min = " << avlTree.min() << endl;
